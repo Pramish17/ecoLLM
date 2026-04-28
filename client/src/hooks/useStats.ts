@@ -33,12 +33,12 @@ export interface StatsData {
   };
 }
 
-export function useStats() {
+export function useStats(refreshKey = 0) {
   const [data, setData] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetch = useCallback(async () => {
+  const doFetch = useCallback(async () => {
     try {
       setLoading(true);
       const res = await window.fetch('/api/stats');
@@ -51,7 +51,8 @@ export function useStats() {
     }
   }, []);
 
-  useEffect(() => { fetch(); }, [fetch]);
+  // Re-fetch whenever refreshKey changes (triggered by model add/delete/toggle)
+  useEffect(() => { doFetch(); }, [doFetch, refreshKey]);
 
-  return { data, loading, error, refetch: fetch };
+  return { data, loading, error, refetch: doFetch };
 }

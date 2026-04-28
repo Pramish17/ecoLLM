@@ -27,6 +27,7 @@ interface ModelResult {
 export default function Comparison() {
   const { data: ci } = useCarbonIntensity();
   const { data: models, loading: modelsLoading } = useModelsContext();
+  // Only compare active (non-hidden) models
   const [inputTokens, setInputTokens] = useState('1000');
   const [outputTokens, setOutputTokens] = useState('500');
   const [results, setResults] = useState<ModelResult[] | null>(null);
@@ -37,7 +38,7 @@ export default function Comparison() {
     const carbonIntensity = ci?.intensity ?? 233;
 
     let customIdx = 0;
-    const calculated = models.all.map(m => {
+    const calculated = models.active.map(m => {
       const energyWh = (inp / 1000) * m.input_wh_per_1k + (out / 1000) * m.output_wh_per_1k;
       const carbonGrams = energyWh * (carbonIntensity / 1000);
       const color = modelColor(m, m.builtin ? 0 : customIdx++);
@@ -78,7 +79,7 @@ export default function Comparison() {
                 Live grid: <span className="text-slate-300 font-mono ml-0.5">{ci.intensity} gCO₂/kWh</span>
               </span>
             )}
-            <span>{models.all.length} models available ({models.custom.length} custom)</span>
+            <span>{models.active.length} active models ({models.custom.filter(m => !m.disabled).length} custom)</span>
           </div>
           <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={calculate}
             disabled={modelsLoading}

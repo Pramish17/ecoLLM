@@ -21,6 +21,8 @@ interface ResultData {
 export default function LogCall() {
   const { data: ci } = useCarbonIntensity();
   const { data: models, loading: modelsLoading, getEnergy } = useModelsContext();
+  // Use only active (non-hidden) models in the dropdown
+  const activeModels = models.active;
 
   const [form, setForm] = useState({
     model: '',
@@ -34,7 +36,7 @@ export default function LogCall() {
   const [error, setError] = useState('');
 
   // Set default model once models load
-  const selectedModel = form.model || models.all[0]?.model_id || '';
+  const selectedModel = form.model || activeModels[0]?.model_id || '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,16 +101,16 @@ export default function LogCall() {
               onChange={e => setForm(f => ({ ...f, model: e.target.value }))}
               className={inputClass + ' cursor-pointer'}
             >
-              {models.builtin.length > 0 && (
+              {activeModels.filter(m => m.builtin).length > 0 && (
                 <optgroup label="Built-in (research-backed)">
-                  {models.builtin.map(m => (
+                  {activeModels.filter(m => m.builtin).map(m => (
                     <option key={m.model_id} value={m.model_id}>{m.display_name}</option>
                   ))}
                 </optgroup>
               )}
-              {models.custom.length > 0 && (
+              {activeModels.filter(m => !m.builtin).length > 0 && (
                 <optgroup label="Custom Models">
-                  {models.custom.map(m => (
+                  {activeModels.filter(m => !m.builtin).map(m => (
                     <option key={m.model_id} value={m.model_id}>{m.display_name} ⚗</option>
                   ))}
                 </optgroup>

@@ -5,9 +5,11 @@ interface ModelsContextValue {
   data: ModelsData;
   loading: boolean;
   error: string | null;
+  refreshKey: number;
   refetch: () => void;
-  addModel: (payload: Omit<ModelEntry, 'builtin' | 'id'>) => Promise<ModelEntry>;
+  addModel: (payload: Omit<ModelEntry, 'builtin' | 'disabled' | 'id'>) => Promise<ModelEntry>;
   deleteModel: (id: number) => Promise<void>;
+  toggleModel: (modelId: string) => Promise<{ disabled: boolean }>;
   getEnergy: (modelId: string) => { input: number; output: number } | null;
 }
 

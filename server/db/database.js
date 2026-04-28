@@ -42,6 +42,10 @@ export function initDb() {
       notes TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS disabled_models (
+      model_id TEXT PRIMARY KEY
+    );
   `);
 
   return db;

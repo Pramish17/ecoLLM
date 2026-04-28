@@ -66,8 +66,8 @@ function DonutLegend({ items }: { items: { name: string; color: string; value: n
 }
 
 export default function Dashboard() {
-  const { data, loading } = useStats();
-  const { data: models } = useModelsContext();
+  const { refreshKey, data: models } = useModelsContext();
+  const { data, loading } = useStats(refreshKey);
 
   // Build a fast lookup: model_id → display_name
   const nameMap = Object.fromEntries(models.all.map(m => [m.model_id, m.display_name]));
